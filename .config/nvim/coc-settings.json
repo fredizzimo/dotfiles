@@ -1,0 +1,38 @@
+{
+    "languageserver": {
+        "ccls": {
+            "enable": true,
+            "command": "ccls",
+            "args": ["-log-file=/tmp/ccls.log", "-v=2"],
+            "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
+            "rootPatterns": [".ccls-root", "compile_commands.json"],
+            "initializationOptions": {
+                "cache": {
+                    "directory": ".ccls-cache"
+                },
+                "client": {
+                    "snippetSupport": true
+                },
+                "workspaceSymbol": {
+                    "maxNum": 1000
+                },
+                "highlight": { "lsRanges" : true }
+            }
+        },
+        "golang": {
+            "enable": false,
+            "command": "gopls",
+            "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+            "filetypes": ["go"],
+            "initializationOptions": {
+                "usePlaceholders": true
+            }
+        }
+    },
+    "python.jediEnabled": false,
+    "list.maxHeight": 20,
+    "list.maxPreviewHeight": 20,
+    "diagnostic.messageTarget": "preview",
+    "signature.target": "preview",
+    "coc.preferences.hoverTarget": "preview"
+}
