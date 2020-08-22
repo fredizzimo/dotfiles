@@ -16,7 +16,6 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'easymotion/vim-easymotion'
 Plug 'unblevable/quick-scope'
-Plug 'haya14busa/is.vim'
 Plug 'dominikduda/vim_current_word'
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'psliwka/vim-smoothie'
@@ -93,12 +92,85 @@ vnoremap <C-j> 10<C-e>
 nnoremap <C-k> 10<C-y>
 vnoremap <C-k> 10<C-y>
 
-" Just for testing for now
-" nn <C-l> :call CocLocations('ccls','$ccls/navigate',{'direction':'D'})<cr>zt
-" nn <C-k> :call CocLocations('ccls','$ccls/navigate',{'direction':'L'})<cr>zt
-" nn <C-j> :call CocLocations('ccls','$ccls/navigate',{'direction':'R'})<cr>zt
-" nn <C-h> :call CocLocations('ccls','$ccls/navigate',{'direction':'U'})<cr>zt
+let g:navigation_mode = ''
 
+function Navigate_j()
+    if  g:navigation_mode ==# 'scroll'
+        execute "normal \<C-d>"
+    elseif g:navigation_mode ==# 'outline'
+        execute "normal! :call CocLocations('ccls','$ccls/navigate',{'direction':'R'})\<cr>zz"
+    elseif g:navigation_mode ==# 'find'
+        execute "normal! nzz"
+    elseif g:navigation_mode ==# 'method'
+        execute "normal! ]mzz"
+    elseif g:navigation_mode ==# 'paragraph'
+        execute "normal! }zz"
+    elseif g:navigation_mode ==# 'list'
+        execute "normal! :CocNext\<cr>zz"
+    elseif g:navigation_mode ==# 'quickfix'
+        execute "normal! :cnext\<cr>zz"
+    elseif g:navigation_mode ==# 'location'
+        execute "normal! :lnext\<cr>zz"
+    else
+        execute "normal! j" 
+    endif
+endfunction
+
+function Navigate_k()
+    if  g:navigation_mode ==# 'scroll'
+        execute "normal \<C-u>"
+    elseif g:navigation_mode ==# 'outline'
+        execute "normal! :call CocLocations('ccls','$ccls/navigate',{'direction':'L'})\<cr>zz"
+    elseif g:navigation_mode ==# 'find'
+        execute "normal! Nzz"
+    elseif g:navigation_mode ==# 'method'
+        execute "normal! [mzz"
+    elseif g:navigation_mode ==# 'paragraph'
+        execute "normal! {zz"
+    elseif g:navigation_mode ==# 'list'
+        execute "normal! :CocPrev\<cr>"
+    elseif g:navigation_mode ==# 'quickfix'
+        execute "normal! :cprev\<cr>zz"
+    elseif g:navigation_mode ==# 'location'
+        execute "normal! :lprev\<cr>zz"
+    else
+        execute "normal! k"
+    endif
+endfunction
+
+function Navigate_h()
+    if  g:navigation_mode ==# 'scroll'
+        execute "normal \<C-b>"
+    elseif g:navigation_mode ==# 'outline'
+        execute "normal! :call CocLocations('ccls','$ccls/navigate',{'direction':'U'})\<cr>zz"
+    else
+        execute "normal! h" 
+    endif
+endfunction
+
+function Navigate_l()
+    if  g:navigation_mode ==# 'scroll'
+        execute "normal \<C-f>"
+    elseif g:navigation_mode ==# 'outline'
+        execute "normal! :call CocLocations('ccls','$ccls/navigate',{'direction':'D'})\<cr>zz"
+    else
+        execute "normal! l" 
+    endif
+endfunction
+
+nnoremap <silent>j :call Navigate_j()<cr>
+nnoremap <silent>k :call Navigate_k()<cr>
+nnoremap <silent>h :call Navigate_h()<cr>
+nnoremap <silent>l :call Navigate_l()<cr>
+nnoremap <silent>nf :let g:navigation_mode='find'<cr>
+nnoremap <silent>nli :let g:navigation_mode='list'<cr>
+nnoremap <silent>nlo :let g:navigation_mode='location'<cr>
+nnoremap <silent>nm :let g:navigation_mode='method'<cr>
+nnoremap <silent>no :let g:navigation_mode='outline'<cr>
+nnoremap <silent>np :let g:navigation_mode='paragraph'<cr>
+nnoremap <silent>nq :let g:navigation_mode='quickfix'<cr>
+nnoremap <silent>ns :let g:navigation_mode='scroll'<cr>
+nnoremap <silent><esc> :let g:navigation_mode=''<cr>
 "
 " The below stuff is taken from the coc.nvim documentation
 " Some servers have issues with backup files, see coc.nvim #649.
@@ -173,7 +245,7 @@ function! s:show_documentation()
 endfunction
 
 " Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
+" autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
