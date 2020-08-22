@@ -320,7 +320,23 @@ nmap <leader>N :CocPrev<cr>
 nmap <leader>ov :edit $MYVIMRC<cr>
 nmap <leader>sv :source $MYVIMRC<cr>
 
-nmap m <Plug>(easymotion-s)
+omap m <Plug>(easymotion-overwin-f)
+nmap M <Plug>(easymotion-bd-jk)
+xmap m <Plug>(easymotion-bd-f)
+xmap M <Plug>(easymotion-bd-jk)
+omap <leader>f <Plug>(easymotion-f)
+omap <leader>t <Plug>(easymotion-t)
+omap <leader>w <Plug>(easymotion-w)
+omap <leader>W <Plug>(easymotion-W)
+omap <leader>e <Plug>(easymotion-e)
+omap <leader>ge <Plug>(easymotion-ge)
+omap <leader>gE <Plug>(easymotion-gE)
+omap <leader>j <Plug>(easymotion-j)
+omap <leader>k <Plug>(easymotion-k)
+omap <leader>a <Plug>(easymotion-jumptoanywhere)
+
+let g:EasyMotion_keys = 'abceghilmnopqrstuvwxyzkdfj'
+let g:EasyMotion_do_mapping = 0
 
 
 "***** Syntax highlighting for ccls ***** 
