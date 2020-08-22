@@ -171,6 +171,17 @@ nnoremap <silent>np :let g:navigation_mode='paragraph'<cr>
 nnoremap <silent>nq :let g:navigation_mode='quickfix'<cr>
 nnoremap <silent>ns :let g:navigation_mode='scroll'<cr>
 nnoremap <silent><esc> :let g:navigation_mode=''<cr>
+
+" Use uppercae for going to the beginning and end of line
+nnoremap H ^
+nnoremap L $
+onoremap H ^
+onoremap L $
+xnoremap H ^
+xnoremap L $
+" Make the yank mapping consistent
+nmap Y y$
+
 "
 " The below stuff is taken from the coc.nvim documentation
 " Some servers have issues with backup files, see coc.nvim #649.
