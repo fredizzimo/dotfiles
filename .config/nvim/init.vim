@@ -234,6 +234,8 @@ nmap <leader>l <C-w>l
 nmap <leader>L :vsplit<cr>
 nmap <leader>n :CocNext<cr>
 nmap <leader>N :CocPrev<cr>
+nmap <leader>ov :edit $MYVIMRC<cr>
+nmap <leader>sv :source $MYVIMRC<cr>
 
 nmap m <Plug>(easymotion-s)
 
