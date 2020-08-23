@@ -56,10 +56,23 @@ autocmd FileType c,cpp,java setlocal commentstring=//\ %s
 let mapleader = " "
 tnoremap <Esc> <C-\><C-n>
 
-" Add a new line by normal mode enter
-nnoremap <CR> m`O<Esc>``
-" And delete by backspace
-nnoremap <BS> _dd
+" Make it easer to add empty lines above and below
+
+func AddLineAbove()
+    silent! execute 'normal! :call append(line(".")-1, repeat([""], v:count1))'."\<cr>"
+    silent! call repeat#set("<Plug>(AddLineAbove)", v:count)
+endfunction
+
+func AddLineBelow()
+    silent! execute 'normal! :call append(line("."), repeat([""], v:count1))'."\<cr>"
+    silent! call repeat#set("\<Plug>(AddLineBelow)", v:count)
+endfunction
+
+nnoremap <silent><Plug>(AddLineAbove) :call AddLineAbove()<cr>
+nnoremap <silent><Plug>(AddLineBelow) :call AddLineBelow()<cr>
+
+nmap yo <Plug>(AddLineBelow)
+nmap yO <Plug>(AddLineAbove)
 
 " Lets save by ctrl-s
 nnoremap <C-s> :w<CR>
@@ -244,10 +257,14 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+silent! nunmap gc
+silent! nunmap gC
 nmap <silent> gca :call CocLocations('ccls','$ccls/call')<cr>
 nmap <silent> gCA :CclsCallHierarchy<cr>
 nmap <silent> gce :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
 nmap <silent> gCE :CclsCalleeHierarchy<cr>
+silent! nunmap gm
+silent! nunmap gM
 nmap <silent> gmv :call CocLocations('ccls','$ccls/member')<cr>
 "  member functions / functions in a namespace
 nmap <silent> gmf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
@@ -255,6 +272,8 @@ nmap <silent> gmf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
 nmap <silent> gmt :call CocLocations('ccls','$ccls/member',{'kind':2})<cr>
 nmap <silent> gM :CclsMemberHierarchy<cr>
 " any types of variables
+silent! nunmap gv
+silent! nunmap gV
 nmap <silent> gv :call CocLocations('ccls','$ccls/vars')<cr>
 " variables of type field
 nmap <silent> gvf :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
@@ -262,6 +281,8 @@ nmap <silent> gvf :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
 nmap <silent> gvl :call CocLocations('ccls','$ccls/vars',{'kind':2})<cr>
 " parameters
 nmap <silent> gvp :call CocLocations('ccls','$ccls/vars',{'kind':4})<cr>
+silent! nunmap gh
+silent! nunmap gH
 " bases
 nmap <silent> ghb :call CocLocations('ccls','$ccls/inheritance',{'levels':10})<cr>
 nmap <silent> gHB :CclsBaseHierarchy<cr>
