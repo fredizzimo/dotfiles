@@ -20,6 +20,7 @@ Plug 'dominikduda/vim_current_word'
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'psliwka/vim-smoothie'
 Plug 'm-pilia/vim-ccls'
+Plug 'wellle/targets.vim'
 call plug#end()
 
 set termguicolors
