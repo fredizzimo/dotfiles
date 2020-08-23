@@ -19,6 +19,7 @@ Plug 'unblevable/quick-scope'
 Plug 'dominikduda/vim_current_word'
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'psliwka/vim-smoothie'
+Plug 'm-pilia/vim-ccls'
 call plug#end()
 
 set termguicolors
@@ -243,7 +244,31 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
-
+nmap <silent> gca :call CocLocations('ccls','$ccls/call')<cr>
+nmap <silent> gCA :CclsCallHierarchy<cr>
+nmap <silent> gce :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
+nmap <silent> gCE :CclsCalleeHierarchy<cr>
+nmap <silent> gmv :call CocLocations('ccls','$ccls/member')<cr>
+"  member functions / functions in a namespace
+nmap <silent> gmf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
+" nested classes / types in a namespace
+nmap <silent> gmt :call CocLocations('ccls','$ccls/member',{'kind':2})<cr>
+nmap <silent> gM :CclsMemberHierarchy<cr>
+" any types of variables
+nmap <silent> gv :call CocLocations('ccls','$ccls/vars')<cr>
+" variables of type field
+nmap <silent> gvf :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
+" local variables
+nmap <silent> gvl :call CocLocations('ccls','$ccls/vars',{'kind':2})<cr>
+" parameters
+nmap <silent> gvp :call CocLocations('ccls','$ccls/vars',{'kind':4})<cr>
+" bases
+nmap <silent> ghb :call CocLocations('ccls','$ccls/inheritance',{'levels':10})<cr>
+nmap <silent> gHB :CclsBaseHierarchy<cr>
+"  derived
+nmap <silent> ghd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':10})<cr>
+nmap <silent> gHD :CclsDerivedHierarchy<cr>
+"
 " Use K to show documentation in preview window.
 " nnoremap <silent> K :call <SID>show_documentation()<CR>
 
@@ -335,9 +360,45 @@ omap <leader>j <Plug>(easymotion-j)
 omap <leader>k <Plug>(easymotion-k)
 omap <leader>a <Plug>(easymotion-jumptoanywhere)
 
+
 let g:EasyMotion_keys = 'abceghilmnopqrstuvwxyzkdfj'
 let g:EasyMotion_do_mapping = 0
 
+"possible g mappings I could use for other things
+" gD - go to definition (can this be combined with the lowercase I'm already
+" using) 
+" gH - start select line mode (a mode I won't use)
+" gn/gN - find the last search match and select it (visual mode) 
+" gp/gP - paste and move the cursor after it (I can't really think of any use
+" cases
+" gQ (and Q) ex mode
+" gR/gr - virtual replace mode, same as insert key in insert mode
+" gV - dont't reselect the previous Visual Area in select mode
+" g_ - Curosrt to last char N - 1 lines lower
+" ga print ascii valuee of character under the cursor (if I really need this,
+" it should be mapped to something else
+" gh - start select mode
+" gi - like i but move to mark
+" gj - useful with wrapped lines (but should be a toggle)
+" gk - same
+" gm - go to char at the middle of screenline
+" go - go to byte in file
+" gv - reselect the previous visual area
+" gq - format text and move (gw wihtout moving should be enough)
+" gx - execute the application under the cursor
+"
+" undecided gJ ( join lines wihtout  space, are there any use cases)
+"
+"g mappings I should start to use more or learn or already use
+"ge/gE - almost the same as be, but works better when starting from the middle
+"of a word. Should only be used for the last movement, so b,b,b,ge
+"gT/gt - go to tab
+"gU/gu - make uppercase, lowercase
+"gd - go to definition
+"gf/gF - go to file with or without line number
+"gg - go to first line
+"gw - format text with motion
+"
 
 "***** Syntax highlighting for ccls ***** 
 
