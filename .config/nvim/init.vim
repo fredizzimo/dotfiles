@@ -12,7 +12,6 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'easymotion/vim-easymotion'
 Plug 'unblevable/quick-scope'
@@ -24,6 +23,7 @@ Plug 'wellle/targets.vim'
 Plug 'svermeulen/vim-cutlass'
 Plug 'svermeulen/vim-yoink'
 Plug 'svermeulen/vim-subversive'
+Plug 'tomtom/tcomment_vim'
 call plug#end()
 
 set termguicolors
@@ -95,6 +95,13 @@ nmap ySs <Plug>YSsurround
 nmap ySS <Plug>YSsurround
 xmap S  <Plug>VSurround
 xmap gS <Plug>VgSurround
+
+let g:tcomment_maps = 0
+nmap yc <Plug>TComment_Comment
+nmap yC <Plug>TComment_Comment$
+nmap dc <Plug>TComment_Uncomment
+nmap dC <Plug>TComment_Uncomment$
+
 
 " ctrl-j ctr-k mappings
 " Use ctrl-j and ctrl-k for navigating search results
