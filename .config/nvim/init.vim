@@ -21,9 +21,13 @@ Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'psliwka/vim-smoothie'
 Plug 'm-pilia/vim-ccls'
 Plug 'wellle/targets.vim'
+Plug 'svermeulen/vim-cutlass'
+Plug 'svermeulen/vim-yoink'
+Plug 'svermeulen/vim-subversive'
 call plug#end()
 
 set termguicolors
+
 
 let g:airline_powerline_fonts = 1
 let g:airline_theme='gruvbox'
@@ -84,13 +88,13 @@ let g:surround_no_mappings = 1
 nmap ds <Plug>Dsurround
 nmap cs <Plug>Csurround
 nmap cS <Plug>CSurround
-nmap s  <Plug>Ysurround
-nmap S  <Plug>YSurround
-nmap ss <Plug>Yssurround
-nmap Ss <Plug>YSsurround
-nmap SS <Plug>YSsurround
-xmap s  <Plug>VSurround
-xmap gs <Plug>VgSurround
+nmap ys  <Plug>Ysurround
+nmap yS  <Plug>YSurround
+nmap yss <Plug>Yssurround
+nmap ySs <Plug>YSsurround
+nmap ySS <Plug>YSsurround
+xmap S  <Plug>VSurround
+xmap gS <Plug>VgSurround
 
 " ctrl-j ctr-k mappings
 " Use ctrl-j and ctrl-k for navigating search results
@@ -194,13 +198,35 @@ onoremap H ^
 onoremap L $
 xnoremap H ^
 xnoremap L $
+"
 " Make the yank mapping consistent
 nmap Y y$
 
+" x means cut, and d is delete with cutlass
+nnoremap x d
+xnoremap x d
+
+nnoremap xx dd
+nnoremap X D
+
+" s is for substitution through subversive
+nmap s <plug>(SubversiveSubstitute)
+nmap ss <plug>(SubversiveSubstituteLine)
+nmap S <plug>(SubversiveSubstitut
+
+nmap <leader>s <plug>(SubversiveSubstituteRange)
+xmap <leader>s <plug>(SubversiveSubstituteRange)
+nmap <leader>ss <plug>(SubversiveSubstituteWordRange)eToEndOfLine)
+
+" We can use ctr-j and ctrl-k to iterate through the copy history
+nmap p <plug>(YoinkPaste_p)
+nmap P <plug>(YoinkPaste_P)
+
+nmap <C-k> <plug>(YoinkPostPasteSwapBack)
+nmap <C-j> <plug>(YoinkPostPasteSwapForward)
 "
 " The below stuff is taken from the coc.nvim documentation
 " Some servers have issues with backup files, see coc.nvim #649.
-
 " Give more space for displaying messages.
 set cmdheight=2
 
@@ -365,7 +391,6 @@ nmap <leader>L :vsplit<cr>
 nmap <leader>n :CocNext<cr>
 nmap <leader>N :CocPrev<cr>
 nmap <leader>ov :edit $MYVIMRC<cr>
-nmap <leader>sv :source $MYVIMRC<cr>
 
 omap m <Plug>(easymotion-overwin-f)
 nmap M <Plug>(easymotion-bd-jk)
