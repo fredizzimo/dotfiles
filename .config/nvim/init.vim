@@ -185,6 +185,7 @@ nmap <leader>ss <plug>(SubversiveSubstituteWordRange)eToEndOfLine)
 nmap p <plug>(YoinkPaste_p)
 nmap P <plug>(YoinkPaste_P)
 
+let g:yoinkIncludeDeleteOperations = 1
 nmap <C-k> <plug>(YoinkPostPasteSwapBack)
 nmap <C-j> <plug>(YoinkPostPasteSwapForward)
 "
@@ -355,7 +356,7 @@ nmap <leader>n :CocNext<cr>
 nmap <leader>N :CocPrev<cr>
 nmap <leader>ov :edit $MYVIMRC<cr>
 
-omap m <Plug>(easymotion-overwin-f)
+nmap m <Plug>(easymotion-overwin-f)
 nmap M <Plug>(easymotion-bd-jk)
 xmap m <Plug>(easymotion-bd-f)
 xmap M <Plug>(easymotion-bd-jk)
