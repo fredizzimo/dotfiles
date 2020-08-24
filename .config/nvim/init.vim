@@ -24,6 +24,7 @@ Plug 'svermeulen/vim-cutlass'
 Plug 'svermeulen/vim-yoink'
 Plug 'svermeulen/vim-subversive'
 Plug 'tomtom/tcomment_vim'
+Plug 'Houl/repmo-vim'
 call plug#end()
 
 set termguicolors
@@ -112,91 +113,46 @@ cnoremap <C-k> <C-t>
 inoremap <C-j> <C-n>
 inoremap <C-k> <C-p>
 
-" Scrolling in visual and normal mode
-nnoremap <C-j> 10<C-e>
-vnoremap <C-j> 10<C-e>
-nnoremap <C-k> 10<C-y>
-vnoremap <C-k> 10<C-y>
+" note swapping , and ; so that forward is done without shift
+noremap <Plug>(Comma) ,
+noremap <Plug>(Semicolon) ;
+map <expr> ; repmo#LastRevKey('<Plug>(Comma)')|sunmap ;
+map <expr> , repmo#LastKey('<Plug>(Semicolon)')|sunmap ,
 
-let g:navigation_mode = ''
+" make the normal f and t work correctly
+noremap <expr> f repmo#ZapKey('f')|sunmap f
+noremap <expr> F repmo#ZapKey('F')|sunmap F
+noremap <expr> t repmo#ZapKey('t')|sunmap t
+noremap <expr> T repmo#ZapKey('T')|sunmap T
 
-function Navigate_j()
-    if  g:navigation_mode ==# 'scroll'
-        execute "normal \<C-d>"
-    elseif g:navigation_mode ==# 'outline'
-        execute "normal! :call CocLocations('ccls','$ccls/navigate',{'direction':'R'})\<cr>zz"
-    elseif g:navigation_mode ==# 'find'
-        execute "normal! nzz"
-    elseif g:navigation_mode ==# 'method'
-        execute "normal! ]mzz"
-    elseif g:navigation_mode ==# 'paragraph'
-        execute "normal! }zz"
-    elseif g:navigation_mode ==# 'list'
-        execute "normal! :CocNext\<cr>zz"
-    elseif g:navigation_mode ==# 'quickfix'
-        execute "normal! :cnext\<cr>zz"
-    elseif g:navigation_mode ==# 'location'
-        execute "normal! :lnext\<cr>zz"
-    else
-        execute "normal! j" 
-    endif
+function MapNavigationKey(trigger, forward, backward)
+    execute 'noremap <expr> n'.a:trigger.' repmo#SelfKey('."'".a:forward."', '".a:backward."'".') | sunmap n'.a:trigger
+    execute 'noremap <expr> N'.a:trigger.' repmo#SelfKey('."'".a:backward."', '".a:forward."'".') | sunmap N'.a:trigger
 endfunction
 
-function Navigate_k()
-    if  g:navigation_mode ==# 'scroll'
-        execute "normal \<C-u>"
-    elseif g:navigation_mode ==# 'outline'
-        execute "normal! :call CocLocations('ccls','$ccls/navigate',{'direction':'L'})\<cr>zz"
-    elseif g:navigation_mode ==# 'find'
-        execute "normal! Nzz"
-    elseif g:navigation_mode ==# 'method'
-        execute "normal! [mzz"
-    elseif g:navigation_mode ==# 'paragraph'
-        execute "normal! {zz"
-    elseif g:navigation_mode ==# 'list'
-        execute "normal! :CocPrev\<cr>"
-    elseif g:navigation_mode ==# 'quickfix'
-        execute "normal! :cprev\<cr>zz"
-    elseif g:navigation_mode ==# 'location'
-        execute "normal! :lprev\<cr>zz"
-    else
-        execute "normal! k"
-    endif
+function MapNavigationFunction(trigger, forward, backward)
+    execute 'map <expr> n'.a:trigger.' repmo#Key('."'".a:forward."', '".a:backward."'".') | sunmap n'.a:trigger
+    execute 'map <expr> N'.a:trigger.' repmo#Key('."'".a:backward."', '".a:forward."'".') | sunmap N'.a:trigger
 endfunction
 
-function Navigate_h()
-    if  g:navigation_mode ==# 'scroll'
-        execute "normal \<C-b>"
-    elseif g:navigation_mode ==# 'outline'
-        execute "normal! :call CocLocations('ccls','$ccls/navigate',{'direction':'U'})\<cr>zz"
-    else
-        execute "normal! h" 
-    endif
-endfunction
-
-function Navigate_l()
-    if  g:navigation_mode ==# 'scroll'
-        execute "normal \<C-f>"
-    elseif g:navigation_mode ==# 'outline'
-        execute "normal! :call CocLocations('ccls','$ccls/navigate',{'direction':'D'})\<cr>zz"
-    else
-        execute "normal! l" 
-    endif
-endfunction
-
-nnoremap <silent>j :call Navigate_j()<cr>
-nnoremap <silent>k :call Navigate_k()<cr>
-nnoremap <silent>h :call Navigate_h()<cr>
-nnoremap <silent>l :call Navigate_l()<cr>
-nnoremap <silent>nf :let g:navigation_mode='find'<cr>
-nnoremap <silent>nli :let g:navigation_mode='list'<cr>
-nnoremap <silent>nlo :let g:navigation_mode='location'<cr>
-nnoremap <silent>nm :let g:navigation_mode='method'<cr>
-nnoremap <silent>no :let g:navigation_mode='outline'<cr>
-nnoremap <silent>np :let g:navigation_mode='paragraph'<cr>
-nnoremap <silent>nq :let g:navigation_mode='quickfix'<cr>
-nnoremap <silent>ns :let g:navigation_mode='scroll'<cr>
-nnoremap <silent><esc> :let g:navigation_mode=''<cr>
+nmap n <nop>
+nmap N <nop>
+xmap n <nop>
+xmap N <nop>
+call MapNavigationFunction('j', '<Plug>(SmoothieDownwards)', '<Plug>(SmoothieUpwards)')
+call MapNavigationFunction('J', '<Plug>(SmoothieForwards)', '<Plug>(SmoothieForwards)')
+call MapNavigationKey('n', '10<C-e>', '10<C-y>')
+call MapNavigationKey('/', 'n', 'N')
+call MapNavigationKey('p', '}zz', '{zz')
+noremap <Plug>(CocNext) :CocNext<cr>zz
+noremap <Plug>(CocPrev) :CocPrev<cr>zz
+call MapNavigationFunction('li', '<Plug>(CocNext)', '<Plug>(CocPrev)')
+noremap <Plug>(QFNext) :cnext<cr>zz
+noremap <Plug>(QFPrev) :cprev<cr>zz
+call MapNavigationFunction('q', '<Plug>(QFNext)', '<Plug>(QFPrev)')
+noremap <Plug>(LNext) :lnext<cr>zz
+noremap <Plug>(LPrev) :lprev<cr>zz
+call MapNavigationFunction('lo', '<Plug>(LoNext)', '<Plug>(LoPrev)')
 
 " Use uppercae for going to the beginning and end of line
 nnoremap H ^
