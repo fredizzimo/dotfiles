@@ -25,6 +25,7 @@ Plug 'svermeulen/vim-yoink'
 Plug 'svermeulen/vim-subversive'
 Plug 'tomtom/tcomment_vim'
 Plug 'Houl/repmo-vim'
+Plug 'nvim-treesitter/nvim-treesitter'
 call plug#end()
 
 set termguicolors
@@ -125,14 +126,22 @@ noremap <expr> F repmo#ZapKey('F')|sunmap F
 noremap <expr> t repmo#ZapKey('t')|sunmap t
 noremap <expr> T repmo#ZapKey('T')|sunmap T
 
+function SelfKeyDontMove(forward, backward)
+    call repmo#SelfKey(a:forward, a:backward)
+    return ""
+endfunctio
+
+function KeyDontMove(forward, backward)
+    call repmo#Key(a:forward, a:backward)
+    return ""
+endfunctio
+
 function MapNavigationKey(trigger, forward, backward)
-    execute 'noremap <expr> n'.a:trigger.' repmo#SelfKey('."'".a:forward."', '".a:backward."'".') | sunmap n'.a:trigger
-    execute 'noremap <expr> N'.a:trigger.' repmo#SelfKey('."'".a:backward."', '".a:forward."'".') | sunmap N'.a:trigger
+    execute 'noremap <expr> n'.a:trigger.' SelfKeyDontMove('''.a:forward.''', '''.a:backward.''') | sunmap n'.a:trigger
 endfunction
 
 function MapNavigationFunction(trigger, forward, backward)
-    execute 'map <expr> n'.a:trigger.' repmo#Key('."'".a:forward."', '".a:backward."'".') | sunmap n'.a:trigger
-    execute 'map <expr> N'.a:trigger.' repmo#Key('."'".a:backward."', '".a:forward."'".') | sunmap N'.a:trigger
+    execute 'map <expr> n'.a:trigger.' KeyDontMove('''.a:forward.''', '''.a:backward.''') | sunmap n'.a:trigger
 endfunction
 
 nmap n <nop>
@@ -153,6 +162,10 @@ call MapNavigationFunction('q', '<Plug>(QFNext)', '<Plug>(QFPrev)')
 noremap <Plug>(LNext) :lnext<cr>zz
 noremap <Plug>(LPrev) :lprev<cr>zz
 call MapNavigationFunction('lo', '<Plug>(LoNext)', '<Plug>(LoPrev)')
+call MapNavigationFunction('ms', '<Plug>(NextMethodStart)zz', '<Plug>(PrevMethodStart)zz')
+call MapNavigationFunction('me', '<Plug>(NextMethodEnd)zz', '<Plug>(PrevMethodEnd)zz')
+call MapNavigationFunction('cs', '<Plug>(NextClassStart)zz', '<Plug>(PrevClassStart)zz')
+call MapNavigationFunction('ce', '<Plug>(NextClassEnd)zz', '<Plug>(PrevClassEnd)zz')
 
 " Use uppercae for going to the beginning and end of line
 nnoremap H ^
@@ -457,3 +470,38 @@ hi link LspCxxHlSymNamespace LspCxxHlGroupNamespace
 hi link LspCxxHlSymVariable LocalVariable
 hi link LspCxxHlSymParameter Identifier
 hi link LspCxxHlSymField MemberVariable
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "all",     -- one of "all", "language", or a list of languages
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    disable = { "c", "cpp" },  -- list of language that will be disabled
+  },
+  refactor = {
+    highlight_current_scope = { enable = false },
+  },
+  textobjects = {
+    move = {
+      enable = true,
+      goto_next_start = {
+        ["<Plug>(NextMethodStart)"] = "@function.outer",
+        ["<Plug>(NextClassStart)"] = "@class.outer",
+      },
+      goto_next_end = {
+        ["<Plug>(NextMethodEnd)"] = "@function.outer",
+        ["<Plug>(NextClassEnd"] = "@class.outer",
+      },
+      goto_previous_start = {
+        ["<Plug>(PrevMethodStart)"] = "@function.outer",
+        ["<Plug>(PrevClassStart)"] = "@class.outer",
+      },
+      goto_previous_end = {
+        ["<Plug>(PrevMethodEnd)"] = "@function.outer",
+        ["<Plug>(PrevClassEnd)"] = "@class.outer",
+      },
+    },
+  },
+}
+EOF
+
