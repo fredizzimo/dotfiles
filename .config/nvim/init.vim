@@ -501,6 +501,15 @@ require'nvim-treesitter.configs'.setup {
         ["<Plug>(PrevClassEnd)"] = "@class.outer",
       },
     },
+    swap = {
+      enable = true,
+      swap_next = {
+        ["ösna"] = "@parameter.inner",
+      },
+      swap_previous = {
+        ["ösla"] = "@parameter.inner",
+      },
+    },
   },
 }
 EOF
