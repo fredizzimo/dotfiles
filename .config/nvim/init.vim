@@ -7,7 +7,8 @@ endif
 call plug#begin('~/.config/nvim/plugged')
 Plug 'gruvbox-community/gruvbox'
 Plug 'vim-airline/vim-airline'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'dir': '~/coc.nvim'}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'justinmk/vim-sneak'
@@ -28,6 +29,8 @@ Plug 'Houl/repmo-vim'
 Plug 'nvim-treesitter/nvim-treesitter'
 call plug#end()
 
+" let g:coc_node_args = ['--nolazy', '--inspect-brk=6045']
+
 set termguicolors
 
 
@@ -46,6 +49,7 @@ augroup END
 
 set hidden
 set background=dark
+let g:gruvbox_contrast_light='soft'
 set mouse=a
 set clipboard=unnamedplus
 set relativenumber
