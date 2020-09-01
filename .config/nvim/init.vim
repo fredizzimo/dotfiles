@@ -28,6 +28,7 @@ Plug 'tomtom/tcomment_vim'
 Plug 'Houl/repmo-vim'
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }
+Plug 'neovim/nvim-lsp'
 call plug#end()
 
 " let g:coc_node_args = ['--nolazy', '--inspect-brk=6045']
@@ -265,6 +266,7 @@ else
 endif
 
 " GoTo code navigation.
+"nmap <silent> gd  <cmd>lua vim.lsp.buf.definition()<CR>
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
@@ -520,5 +522,27 @@ require'nvim-treesitter.configs'.setup {
     },
   },
 }
+EOF
+
+lua <<EOF
+    local nvim_lsp = require 'nvim_lsp'
+    --[[
+    nvim_lsp.ccls.setup{
+        init_options = {
+            workspaceSymbol = {
+                maxNum = 0,
+            },
+            ccls = {
+                launch = {
+                    args = {"-log-file=/tmp/ccls.log", "-v=2"},
+                },
+                workspaceSymbol = {
+                    maxNum = 0
+                },
+            },
+        },
+        filetypes = {"c", "cpp", "cuda", "objc", "objcpp"},
+    }
+    ]]--
 EOF
 
