@@ -27,7 +27,6 @@ Plug 'svermeulen/vim-subversive'
 Plug 'tomtom/tcomment_vim'
 Plug 'Houl/repmo-vim'
 Plug 'nvim-treesitter/nvim-treesitter'
-Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }
 Plug 'neovim/nvim-lsp'
 call plug#end()
 
@@ -63,9 +62,6 @@ set shiftwidth=4
 set expandtab
 " Disable the current word plugin by default
 let g:vim_current_word#enabled = 0
-
-let g:clap_insert_mode_only=v:true
-let g:clap_layout={'relative': 'editor', 'width': '67%', 'height': '95%', 'row': '5%', 'col': '17%'}
 
 autocmd FileType c,cpp,java setlocal commentstring=//\ %s
 
@@ -353,19 +349,19 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 " Add `:OR` command for organize imports of the current buffer.
 command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
 
-nmap <leader>b :Clap buffers<cr>
+nmap <leader>b :CocList buffers<cr>
 nmap <leader>c <C-w>c
-nmap <leader>e :Clap filer<cr>
+nmap <leader>e :CocCommand explorer<cr>
 nmap <leader>f :CocList<cr>
-nmap <leader>fb :Clap buffers<cr>
+nmap <leader>fb :CocList buffers<cr>
 nmap <leader>fd :CocList diagnostics<cr>
-nmap <leader>ff :Clap files<cr>
+nmap <leader>ff :CocList files<cr>
 nmap <leader>fF :CocList files<space>
-nmap <leader>fg :Clap grep<cr>
-nmap <leader>fG :Clap grep2<cr>
-nmap <leader>fh :Clap help_tags<cr>
+nmap <leader>fg :CocList grep<cr>
+nmap <leader>fG :CocList grep<space>
+nmap <leader>fh :CocList helptags<cr>
 nmap <leader>fl :CocList lines<cr>
-nmap <leader>fm :Clap history<cr>
+nmap <leader>fm :CocList mru<cr>
 nmap <leader>fo :CocList outline<cr>
 nmap <leader>fr :CocListResume<cr>
 nmap <leader>fs :CocList --interactive --no-sort symbols<cr>
