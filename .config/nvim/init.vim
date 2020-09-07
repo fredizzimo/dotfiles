@@ -4,6 +4,8 @@ if empty(glob('~/.config/nvim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall
 endif
 
+set termguicolors
+
 call plug#begin('~/.config/nvim/plugged')
 Plug 'gruvbox-community/gruvbox'
 Plug 'vim-airline/vim-airline'
@@ -32,25 +34,22 @@ call plug#end()
 
 " let g:coc_node_args = ['--nolazy', '--inspect-brk=6045']
 
-set termguicolors
-
-
 let g:airline_powerline_fonts = 1
 let g:airline_theme='gruvbox'
 
+colorscheme PaperColor
 augroup qs_colors
     autocmd!
     autocmd vimenter * colorscheme gruvbox
     autocmd vimenter * AirlineRefresh
-    autocmd vimenter,ColorScheme * highlight QuickScopePrimary guifg='#afff5f' gui=underline ctermfg=155 cterm=underline
-    autocmd vimenter,ColorScheme * highlight QuickScopeSecondary guifg='#5fffff' gui=underline ctermfg=81 cterm=underline
     autocmd vimenter,ColorScheme * highlight MemberVariable guifg=#6b877c
     autocmd vimenter,ColorScheme * highlight LocalVariable guifg=#97bfaf
 augroup END
 
 set hidden
-set background=dark
-let g:gruvbox_contrast_light='soft'
+set background=light
+let g:gruvbox_contrast_light='hard'
+let g:gruvbox_italic=1
 set mouse=a
 set clipboard=unnamedplus
 set relativenumber
@@ -62,6 +61,11 @@ set shiftwidth=4
 set expandtab
 " Disable the current word plugin by default
 let g:vim_current_word#enabled = 0
+
+let $GIT_EDITOR = 'nvr -cc split --remote-wait'
+let $VISUAL = 'nvr -cc split --remote-wait'
+let $EDITOR = 'nvr -cc split --remote-wait'
+autocmd FileType gitcommit,gitrebase,gitconfig set bufhidden=delete
 
 autocmd FileType c,cpp,java setlocal commentstring=//\ %s
 
@@ -430,52 +434,54 @@ let g:EasyMotion_do_mapping = 0
 "gw - format text with motion
 "
 
+
 "***** Syntax highlighting for ccls ***** 
+if 0 
+    " Preprocessor Skipped Regions:
+    "
+    " This is used for false branches of #if or other preprocessor conditions
+    hi link LspCxxHlSkippedRegion Comment
 
-" Preprocessor Skipped Regions:
-"
-" This is used for false branches of #if or other preprocessor conditions
-hi link LspCxxHlSkippedRegion Comment
+    " This is the first and last line of the preprocessor regions
+    " in most cases this contains the #if/#else/#endif statements
+    " so it is better to let syntax do the highlighting.
+    hi link LspCxxHlSkippedRegionBeginEnd Normal
 
-" This is the first and last line of the preprocessor regions
-" in most cases this contains the #if/#else/#endif statements
-" so it is better to let syntax do the highlighting.
-hi link LspCxxHlSkippedRegionBeginEnd Normal
+    " Syntax Highlighting:
+    "
+    " Custom Highlight Groups
+    hi link LspCxxHlGroupEnumConstant Constant
+    hi link LspCxxHlGroupNamespace Type
 
-" Syntax Highlighting:
-"
-" Custom Highlight Groups
-hi link LspCxxHlGroupEnumConstant Constant
-hi link LspCxxHlGroupNamespace Type
+    hi link LspCxxHlSymUnknown Normal
 
-hi link LspCxxHlSymUnknown Normal
+    " Type
+    hi link LspCxxHlSymClass Structure
+    hi link LspCxxHlSymStruct Structure
+    hi link LspCxxHlSymEnum Structure
+    hi link LspCxxHlSymTypeAlias Type
+    hi link LspCxxHlSymTypeParameter Type
 
-" Type
-hi link LspCxxHlSymClass Structure
-hi link LspCxxHlSymStruct Structure
-hi link LspCxxHlSymEnum Structure
-hi link LspCxxHlSymTypeAlias Type
-hi link LspCxxHlSymTypeParameter Type
+    " Function
+    hi link LspCxxHlSymFunction Function
+    hi link LspCxxHlSymMethod Function
+    hi link LspCxxHlSymStaticMethod Function
+    hi link LspCxxHlSymConstructor Function
 
-" Function
-hi link LspCxxHlSymFunction Function
-hi link LspCxxHlSymMethod Function
-hi link LspCxxHlSymStaticMethod Function
-hi link LspCxxHlSymConstructor Function
+    " EnumConstant
+    hi link LspCxxHlSymEnumMember LspCxxHlGroupEnumConstant
 
-" EnumConstant
-hi link LspCxxHlSymEnumMember LspCxxHlGroupEnumConstant
+    " Preprocessor
+    hi link LspCxxHlSymMacro Macro
 
-" Preprocessor
-hi link LspCxxHlSymMacro Macro
+    " Namespace
+    hi link LspCxxHlSymNamespace LspCxxHlGroupNamespace
 
-" Namespace
-hi link LspCxxHlSymNamespace LspCxxHlGroupNamespace
-
-" Variables
-hi link LspCxxHlSymVariable LocalVariable
-hi link LspCxxHlSymParameter Identifier
-hi link LspCxxHlSymField MemberVariable
+    " Variables
+    hi link LspCxxHlSymVariable LocalVariable
+    hi link LspCxxHlSymParameter Identifier
+    hi link LspCxxHlSymField MemberVariable
+endif
 
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
