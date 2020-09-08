@@ -20,7 +20,7 @@ Plug 'easymotion/vim-easymotion'
 Plug 'unblevable/quick-scope'
 Plug 'dominikduda/vim_current_word'
 Plug 'jackguo380/vim-lsp-cxx-highlight'
-Plug 'psliwka/vim-smoothie'
+" Plug 'psliwka/vim-smoothie'
 Plug 'm-pilia/vim-ccls'
 Plug 'wellle/targets.vim'
 Plug 'svermeulen/vim-cutlass'
@@ -50,8 +50,10 @@ let g:gruvbox_contrast_light='hard'
 let g:gruvbox_italic=1
 set mouse=a
 set clipboard=unnamedplus
-set relativenumber
+set norelativenumber
+set number
 set scrolloff=3
+set nowrap
 set wildmode=list:longest,full
 set ignorecase
 set smartcase
@@ -170,19 +172,34 @@ noremap <Plug>(QFNext) :cnext<cr>zz
 noremap <Plug>(QFPrev) :cprev<cr>zz
 noremap <Plug>(LNext) :lnext<cr>zz
 noremap <Plug>(LPrev) :lprev<cr>zz
-call MapNavigationFunction('cs', '<Plug>(NextClassStart)zz', '<Plug>(PrevClassStart)zz')
-call MapNavigationFunction('ce', '<Plug>(NextClassEnd)zz', '<Plug>(PrevClassEnd)zz')
-call MapNavigationFunction('d', '[czz', ']czz')
-call MapNavigationFunction('j', '<Plug>(SmoothieDownwards)', '<Plug>(SmoothieUpwards)')
-call MapNavigationFunction('J', '<Plug>(SmoothieForwards)', '<Plug>(SmoothieForwards)')
+noremap <Plug>(Search) /
+noremap <Plug>(StarSearch) *
+noremap <Plug>(ZTop) zt
+noremap <Plug>(ZCenter) zz
+noremap <Plug>(ZBottom) zb
+call MapNavigationFunction('cs', '<Plug>(NextClassStart)zz', '<Plug>(PrevClassStart)<Plug>(ZCenter)')
+nmap nc, ncs,
+nmap nc; ncs;
+call MapNavigationFunction('ce', '<Plug>(NextClassEnd)zz', '<Plug>(PrevClassEnd)<Plug>(ZCenter)')
+call MapNavigationFunction('d', '[c<Plug>(ZCenter)', ']c<Plug>(ZCenter)')
+call MapNavigationKey('j', '<C-d>', '<C-u>')
 call MapNavigationFunction('li', '<Plug>(CocNext)', '<Plug>(CocPrev)')
 call MapNavigationFunction('lo', '<Plug>(LoNext)', '<Plug>(LoPrev)')
-call MapNavigationFunction('ms', '<Plug>(NextMethodStart)zz', '<Plug>(PrevMethodStart)zz')
-call MapNavigationFunction('me', '<Plug>(NextMethodEnd)zz', '<Plug>(PrevMethodEnd)zz')
-call MapNavigationKey('n', '10<C-e>', '10<C-y>')
-call MapNavigationKey('p', '}zz', '{zz')
+call MapNavigationFunction('ms', '<Plug>(NextMethodStart)<Plug>(ZCenter)', '<Plug>(PrevMethodStart)<Plug>(ZCenter)')
+nmap nm, nms,
+nmap nm; nms;
+call MapNavigationFunction('me', '<Plug>(NextMethodEnd)<Plug>(ZCenter)', '<Plug>(PrevMethodEnd)<Plug>(ZCenter)')
+call MapNavigationKey('n', '3<C-e>', '3<C-y>')
+nmap n, nn,
+nmap n; nn;
+call MapNavigationKey('p', '}<Plug>(ZCenter)', '{<Plug>(ZCenter)')
 call MapNavigationFunction('q', '<Plug>(QFNext)', '<Plug>(QFPrev)')
 call MapNavigationKey('/', 'n', 'N')
+nmap / n/<Plug>(Search)
+nmap * n/<Plug>(StarSearch)
+nmap zt <Plug>(ZTop)nn
+nmap zb <Plug>(ZBottom)nn
+nmap zz <Plug>(ZCenter)nn
 
 " Use uppercae for going to the beginning and end of line
 nnoremap H ^
