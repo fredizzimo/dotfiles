@@ -30,6 +30,7 @@ Plug 'tomtom/tcomment_vim'
 Plug 'Houl/repmo-vim'
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'neovim/nvim-lsp'
+Plug 'samoshkin/vim-mergetool'
 call plug#end()
 
 " let g:coc_node_args = ['--nolazy', '--inspect-brk=6045']
@@ -37,13 +38,10 @@ call plug#end()
 let g:airline_powerline_fonts = 1
 let g:airline_theme='gruvbox'
 
-colorscheme PaperColor
 augroup qs_colors
     autocmd!
     autocmd vimenter * colorscheme gruvbox
     autocmd vimenter * AirlineRefresh
-    autocmd vimenter,ColorScheme * highlight MemberVariable guifg=#6b877c
-    autocmd vimenter,ColorScheme * highlight LocalVariable guifg=#97bfaf
 augroup END
 
 set hidden
@@ -55,12 +53,21 @@ set clipboard=unnamedplus
 set relativenumber
 set scrolloff=3
 set wildmode=list:longest,full
+set ignorecase
+set smartcase
 
 set tabstop=4
 set shiftwidth=4
 set expandtab
 " Disable the current word plugin by default
 let g:vim_current_word#enabled = 0
+
+let g:mergetool_layout = 'mr,b'
+let g:mergetool_prefer_revision = 'local'
+nmap <expr> <C-Left> &diff? '<Plug>(MergetoolDiffExchangeLeft)' : '<C-Left>'
+nmap <expr> <C-Right> &diff? '<Plug>(MergetoolDiffExchangeRight)' : '<C-Right>'
+nmap <expr> <C-Down> &diff? '<Plug>(MergetoolDiffExchangeDown)' : '<C-Down>'
+nmap <expr> <C-Up> &diff? '<Plug>(MergetoolDiffExchangeUp)' : '<C-Up>'
 
 let $GIT_EDITOR = 'nvr -cc split --remote-wait'
 let $VISUAL = 'nvr -cc split --remote-wait'
@@ -157,24 +164,25 @@ nmap n <nop>
 nmap N <nop>
 xmap n <nop>
 xmap N <nop>
-call MapNavigationFunction('j', '<Plug>(SmoothieDownwards)', '<Plug>(SmoothieUpwards)')
-call MapNavigationFunction('J', '<Plug>(SmoothieForwards)', '<Plug>(SmoothieForwards)')
-call MapNavigationKey('n', '10<C-e>', '10<C-y>')
-call MapNavigationKey('/', 'n', 'N')
-call MapNavigationKey('p', '}zz', '{zz')
 noremap <Plug>(CocNext) :CocNext<cr>zz
 noremap <Plug>(CocPrev) :CocPrev<cr>zz
-call MapNavigationFunction('li', '<Plug>(CocNext)', '<Plug>(CocPrev)')
 noremap <Plug>(QFNext) :cnext<cr>zz
 noremap <Plug>(QFPrev) :cprev<cr>zz
-call MapNavigationFunction('q', '<Plug>(QFNext)', '<Plug>(QFPrev)')
 noremap <Plug>(LNext) :lnext<cr>zz
 noremap <Plug>(LPrev) :lprev<cr>zz
+call MapNavigationFunction('cs', '<Plug>(NextClassStart)zz', '<Plug>(PrevClassStart)zz')
+call MapNavigationFunction('ce', '<Plug>(NextClassEnd)zz', '<Plug>(PrevClassEnd)zz')
+call MapNavigationFunction('d', '[czz', ']czz')
+call MapNavigationFunction('j', '<Plug>(SmoothieDownwards)', '<Plug>(SmoothieUpwards)')
+call MapNavigationFunction('J', '<Plug>(SmoothieForwards)', '<Plug>(SmoothieForwards)')
+call MapNavigationFunction('li', '<Plug>(CocNext)', '<Plug>(CocPrev)')
 call MapNavigationFunction('lo', '<Plug>(LoNext)', '<Plug>(LoPrev)')
 call MapNavigationFunction('ms', '<Plug>(NextMethodStart)zz', '<Plug>(PrevMethodStart)zz')
 call MapNavigationFunction('me', '<Plug>(NextMethodEnd)zz', '<Plug>(PrevMethodEnd)zz')
-call MapNavigationFunction('cs', '<Plug>(NextClassStart)zz', '<Plug>(PrevClassStart)zz')
-call MapNavigationFunction('ce', '<Plug>(NextClassEnd)zz', '<Plug>(PrevClassEnd)zz')
+call MapNavigationKey('n', '10<C-e>', '10<C-y>')
+call MapNavigationKey('p', '}zz', '{zz')
+call MapNavigationFunction('q', '<Plug>(QFNext)', '<Plug>(QFPrev)')
+call MapNavigationKey('/', 'n', 'N')
 
 " Use uppercae for going to the beginning and end of line
 nnoremap H ^
@@ -315,9 +323,6 @@ function! s:show_documentation()
   endif
 endfunction
 
-" Highlight the symbol and its references when holding the cursor.
-" autocmd CursorHold * silent call CocActionAsync('highlight')
-
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
 
@@ -331,6 +336,8 @@ augroup cocsettings
   autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
   " Update signature help on jump placeholder.
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+  " Highlight the symbol and its references when holding the cursor.
+  autocmd CursorHold * silent call CocActionAsync('highlight')
 augroup end
 
 " Map function and class text objects
@@ -433,55 +440,14 @@ let g:EasyMotion_do_mapping = 0
 "gg - go to first line
 "gw - format text with motion
 "
+"
+function! SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
 
-
-"***** Syntax highlighting for ccls ***** 
-if 0 
-    " Preprocessor Skipped Regions:
-    "
-    " This is used for false branches of #if or other preprocessor conditions
-    hi link LspCxxHlSkippedRegion Comment
-
-    " This is the first and last line of the preprocessor regions
-    " in most cases this contains the #if/#else/#endif statements
-    " so it is better to let syntax do the highlighting.
-    hi link LspCxxHlSkippedRegionBeginEnd Normal
-
-    " Syntax Highlighting:
-    "
-    " Custom Highlight Groups
-    hi link LspCxxHlGroupEnumConstant Constant
-    hi link LspCxxHlGroupNamespace Type
-
-    hi link LspCxxHlSymUnknown Normal
-
-    " Type
-    hi link LspCxxHlSymClass Structure
-    hi link LspCxxHlSymStruct Structure
-    hi link LspCxxHlSymEnum Structure
-    hi link LspCxxHlSymTypeAlias Type
-    hi link LspCxxHlSymTypeParameter Type
-
-    " Function
-    hi link LspCxxHlSymFunction Function
-    hi link LspCxxHlSymMethod Function
-    hi link LspCxxHlSymStaticMethod Function
-    hi link LspCxxHlSymConstructor Function
-
-    " EnumConstant
-    hi link LspCxxHlSymEnumMember LspCxxHlGroupEnumConstant
-
-    " Preprocessor
-    hi link LspCxxHlSymMacro Macro
-
-    " Namespace
-    hi link LspCxxHlSymNamespace LspCxxHlGroupNamespace
-
-    " Variables
-    hi link LspCxxHlSymVariable LocalVariable
-    hi link LspCxxHlSymParameter Identifier
-    hi link LspCxxHlSymField MemberVariable
-endif
 
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
