@@ -64,6 +64,8 @@ set expandtab
 " Disable the current word plugin by default
 let g:vim_current_word#enabled = 0
 
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'cpp', 'c', 'javascript', 'typescript']
+
 let g:mergetool_layout = 'mr,b'
 let g:mergetool_prefer_revision = 'local'
 nmap <expr> <C-Left> &diff? '<Plug>(MergetoolDiffExchangeLeft)' : '<C-Left>'
@@ -290,9 +292,13 @@ else
   inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 endif
 
+" Close any possibly open preview windows when exiting insert mode
+inoremap <silent><esc> <esc>:pclose<cr>
+
 " GoTo code navigation.
 "nmap <silent> gd  <cmd>lua vim.lsp.buf.definition()<CR>
 nmap <silent> gd <Plug>(coc-definition)
+nnoremap <silent> gD :call <SID>show_documentation()<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)

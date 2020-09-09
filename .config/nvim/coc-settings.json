@@ -6,9 +6,13 @@
             "args": ["-log-file=/tmp/ccls.log", "-v=2"],
             "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
             "rootPatterns": [".ccls-root", "compile_commands.json"],
+            "trace.server": "off",
             "initializationOptions": {
                 "cache": {
                     "directory": ".ccls-cache"
+                },
+                "completion": {
+                    "caseSensitivity": 1
                 },
                 "client": {
                     "snippetSupport": true
@@ -32,7 +36,43 @@
     "python.jediEnabled": false,
     "list.maxHeight": 20,
     "list.maxPreviewHeight": 20,
-    "diagnostic.messageTarget": "preview",
+    "diagnostic.enableMessage": "never",
+    "diagnostic.checkCurrentLine": true,
+    "diagnostic.virtualText": true,
+    "diagnostic.virtualTextCurrentLineOnly": true,
+    "diagnostic.warningSign": "",
+    "diagnostic.errorSign": "",
+    "diagnostic.infoSign": "",
+    "diagnostic.hintSign": "",
     "signature.target": "preview",
-    "coc.preferences.hoverTarget": "preview"
+    "coc.preferences.hoverTarget": "preview",
+    "coc.preferences.previewAutoClose": false,
+    "suggest.enablePreview": true,
+    "suggest.completionItemKindLabels": {
+        "keyword": "",
+        "variable": "",
+        "value": "",
+        "operator": "Ψ",
+        "function": "ƒ",
+        "reference": "渚",
+        "constant": "",
+        "method": "",
+        "struct": "פּ",
+        "class": "",
+        "interface": "",
+        "text": "",
+        "enum": "",
+        "enumMember": "",
+        "module": "",
+        "color": "",
+        "property": "",
+        "field": "料",
+        "unit": "",
+        "event": "鬒",
+        "file": "",
+        "folder": "",
+        "snippet": "",
+        "typeParameter": "",
+        "default": ""
+    }
 }
