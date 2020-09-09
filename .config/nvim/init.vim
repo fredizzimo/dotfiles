@@ -83,6 +83,13 @@ autocmd FileType c,cpp,java setlocal commentstring=//\ %s
 let mapleader = " "
 tnoremap <Esc> <C-\><C-n>
 
+let g:coc_explorer_global_presets = {
+\   'floating': {
+\     'position': 'floating',
+\     'open-action-strategy': 'sourceWindow',
+\   },
+\ }
+
 " Make it easer to add empty lines above and below
 
 func AddLineAbove()
@@ -385,7 +392,7 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 
 nmap <leader>b :CocList buffers<cr>
 nmap <leader>c <C-w>c
-nmap <leader>e :CocCommand explorer<cr>
+nmap <leader>e :CocCommand explorer --preset floating<cr>
 nmap <leader>f :CocList<cr>
 nmap <leader>fb :CocList buffers<cr>
 nmap <leader>fd :CocList diagnostics<cr>

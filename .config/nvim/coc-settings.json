@@ -74,5 +74,6 @@
         "snippet": "",
         "typeParameter": "",
         "default": ""
-    }
+    },
+    "explorer.icon.enableNerdfont": true
 }
