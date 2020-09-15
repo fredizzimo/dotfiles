@@ -105,6 +105,14 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
+if [ -f ~/.aliases ]; then
+    . ~/.aliases
+fi
+
+if [ -f ~/.aliases.local ]; then
+    . ~/.aliases.local
+fi
+
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -115,12 +123,3 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-
-export VISUAL=nvim
-export EDITOR="$VISUAL"
-alias vim="nvim"
-alias vi="nvim"
-alias oldvim="vim"
-export PATH=$PATH:~/clang/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/
-export PATH=$PATH:/usr/local/go/bin
-alias dotfiles='/usr/bin/git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
