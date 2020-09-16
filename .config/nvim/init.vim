@@ -31,6 +31,7 @@ Plug 'Houl/repmo-vim'
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'neovim/nvim-lsp'
 Plug 'samoshkin/vim-mergetool'
+Plug 'skywind3000/asyncrun.vim'
 call plug#end()
 
 " let g:coc_node_args = ['--nolazy', '--inspect-brk=6045']
@@ -57,6 +58,14 @@ set nowrap
 set wildmode=list:longest,full
 set ignorecase
 set smartcase
+set title
+
+set isfname+=:,\
+function WSLFilename(fname)
+    let ret = substitute(a:fname, '\\','/','g')
+    return substitute(ret, '\v(\a):', '/mnt/\L\1\e', 'g')
+endfunction
+set includeexpr=WSLFilename(v:fname)
 
 set tabstop=4
 set shiftwidth=4
@@ -471,19 +480,15 @@ let g:EasyMotion_do_mapping = 0
 "gw - format text with motion
 "
 "
-function! SynStack()
-  if !exists("*synstack")
-    return
-  endif
-  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-endfunc
-
+augroup quickfix
+    autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(8, 1)
+augroup END
 
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all",     -- one of "all", "language", or a list of languages
   highlight = {
-    enable = true,              -- false will disable the whole extension
+    enable = false,              -- false will disable the whole extension
     disable = { "c", "cpp" },  -- list of language that will be disabled
   },
   refactor = {
