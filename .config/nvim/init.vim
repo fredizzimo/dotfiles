@@ -9,14 +9,20 @@ set termguicolors
 call plug#begin('~/.config/nvim/plugged')
 Plug 'gruvbox-community/gruvbox'
 Plug 'vim-airline/vim-airline'
-"Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'neoclide/coc.nvim', {'dir': '~/coc.nvim'}
+if !exists('g:vscode')
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+endif
+"Plug 'neoclide/coc.nvim', {'dir': '~/coc.nvim'}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'editorconfig/editorconfig-vim'
 Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
-Plug 'easymotion/vim-easymotion'
+if !exists('g:vscode')
+    Plug 'easymotion/vim-easymotion'
+else
+    Plug 'asvetliakov/vim-easymotion', {'as': 'vim-easymotion-vscode'}
+endif
 Plug 'unblevable/quick-scope'
 Plug 'dominikduda/vim_current_word'
 Plug 'jackguo380/vim-lsp-cxx-highlight'
@@ -33,6 +39,9 @@ Plug 'neovim/nvim-lsp'
 Plug 'samoshkin/vim-mergetool'
 Plug 'skywind3000/asyncrun.vim'
 call plug#end()
+
+let g:python_host_prog  = '~/.config/nvim/.venv2/bin/python'
+let g:python3_host_prog  = '~/.config/nvim/.venv3/bin/python'
 
 " let g:coc_node_args = ['--nolazy', '--inspect-brk=6045']
 
@@ -195,19 +204,40 @@ noremap <Plug>(StarSearch) *
 noremap <Plug>(ZTop) zt
 noremap <Plug>(ZCenter) zz
 noremap <Plug>(ZBottom) zb
+if exists('g:vscode')
+    function ScrollLines(num, dir)
+        let c = a:num
+        while c > 0
+            call VSCodeExtensionNotify('scroll-line', a:dir)
+            let c -= 1
+        endwhile
+    endfunction
+    noremap <expr> <Plug>(Scroll3LinesDown) ScrollLines(3, 'down')
+    noremap <expr> <Plug>(Scroll3LinesUp) ScrollLines(3, 'up')
+    noremap <expr> <Plug>(ScrollHalfPageDown) VSCodeExtensionCall('scroll', 'halfPage', 'down')
+    noremap <expr> <Plug>(ScrollHalfPageUp) VSCodeExtensionCall('scroll', 'halfPage', 'up')
+endif
 call MapNavigationFunction('cs', '<Plug>(NextClassStart)zz', '<Plug>(PrevClassStart)<Plug>(ZCenter)')
 nmap nc, ncs,
 nmap nc; ncs;
 call MapNavigationFunction('ce', '<Plug>(NextClassEnd)zz', '<Plug>(PrevClassEnd)<Plug>(ZCenter)')
 call MapNavigationFunction('d', '[c<Plug>(ZCenter)', ']c<Plug>(ZCenter)')
-call MapNavigationKey('j', '<C-d>', '<C-u>')
+if !exists('g:vscode')
+    call MapNavigationKey('j', '<C-d>', '<C-u>')
+else
+    call MapNavigationFunction('j', '<Plug>(ScrollHalfPageDown)', '<Plug>(ScrollHalfPageUp)')
+endif
 call MapNavigationFunction('li', '<Plug>(CocNext)', '<Plug>(CocPrev)')
 call MapNavigationFunction('lo', '<Plug>(LoNext)', '<Plug>(LoPrev)')
 call MapNavigationFunction('ms', '<Plug>(NextMethodStart)<Plug>(ZCenter)', '<Plug>(PrevMethodStart)<Plug>(ZCenter)')
 nmap nm, nms,
 nmap nm; nms;
 call MapNavigationFunction('me', '<Plug>(NextMethodEnd)<Plug>(ZCenter)', '<Plug>(PrevMethodEnd)<Plug>(ZCenter)')
-call MapNavigationKey('n', '3<C-e>', '3<C-y>')
+if !exists('g:vscode')
+    call MapNavigationKey('n', '3<C-e>', '3<C-y>')
+else
+    call MapNavigationFunction('n', '<Plug>(Scroll3LinesDown)', '<Plug>(Scroll3LinesUp)')
+endif
 nmap n, nn,
 nmap n; nn;
 call MapNavigationKey('p', '}<Plug>(ZCenter)', '{<Plug>(ZCenter)')
@@ -275,129 +305,132 @@ else
   set signcolumn=yes
 endif
 
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-    \ g:coc_enabled ? (
-    \ pumvisible() ? "\<C-n>" :
-    \ <SID>check_back_space() ? "\<TAB>" :
-    \ coc#refresh()
-    \ ) : "\<TAB>"
-        
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+if !exists('g:vscode')
+    " Use tab for trigger completion with characters ahead and navigate.
+    " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+    " other plugin before putting this into your config.
+    inoremap <silent><expr> <TAB>
+        \ g:coc_enabled ? (
+        \ pumvisible() ? "\<C-n>" :
+        \ <SID>check_back_space() ? "\<TAB>" :
+        \ coc#refresh()
+        \ ) : "\<TAB>"
+            
+    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+    function! s:check_back_space() abort
+      let col = col('.') - 1
+      return !col || getline('.')[col - 1]  =~# '\s'
+    endfunction
 
-" Use <c-space> to trigger completion.
-if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
-else
-  inoremap <silent><expr> <c-@> coc#refresh()
+    " Use <c-space> to trigger completion.
+    if has('nvim')
+      inoremap <silent><expr> <c-space> coc#refresh()
+    else
+      inoremap <silent><expr> <c-@> coc#refresh()
+    endif
+
+    " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+    " position. Coc only does snippet and additional edit on confirm.
+    " <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
+    if exists('*complete_info')
+      inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+    else
+      inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+    endif
+
+    " Close any possibly open preview windows when exiting insert mode
+    inoremap <silent><esc> <esc>:pclose<cr>
+
+    " GoTo code navigation.
+    "nmap <silent> gd  <cmd>lua vim.lsp.buf.definition()<CR>
+    nmap <silent> gd <Plug>(coc-definition)
+    nnoremap <silent> gD :call <SID>show_documentation()<CR>
+    nmap <silent> gy <Plug>(coc-type-definition)
+    nmap <silent> gi <Plug>(coc-implementation)
+    nmap <silent> gr <Plug>(coc-references)
+    silent! nunmap gc
+    silent! nunmap gC
+    nmap <silent> gca :call CocLocations('ccls','$ccls/call')<cr>
+    nmap <silent> gCA :CclsCallHierarchy<cr>
+    nmap <silent> gce :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
+    nmap <silent> gCE :CclsCalleeHierarchy<cr>
+    silent! nunmap gm
+    silent! nunmap gM
+    nmap <silent> gmv :call CocLocations('ccls','$ccls/member')<cr>
+    "  member functions / functions in a namespace
+    nmap <silent> gmf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
+    " nested classes / types in a namespace
+    nmap <silent> gmt :call CocLocations('ccls','$ccls/member',{'kind':2})<cr>
+    nmap <silent> gM :CclsMemberHierarchy<cr>
+    " any types of variables
+    silent! nunmap gv
+    silent! nunmap gV
+    nmap <silent> gv :call CocLocations('ccls','$ccls/vars')<cr>
+    " variables of type field
+    nmap <silent> gvf :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
+    " local variables
+    nmap <silent> gvl :call CocLocations('ccls','$ccls/vars',{'kind':2})<cr>
+    " parameters
+    nmap <silent> gvp :call CocLocations('ccls','$ccls/vars',{'kind':4})<cr>
+    silent! nunmap gh
+    silent! nunmap gH
+    " bases
+    nmap <silent> ghb :call CocLocations('ccls','$ccls/inheritance',{'levels':10})<cr>
+    nmap <silent> gHB :CclsBaseHierarchy<cr>
+    "  derived
+    nmap <silent> ghd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':10})<cr>
+    nmap <silent> gHD :CclsDerivedHierarchy<cr>
+    "
+    " Use K to show documentation in preview window.
+    " nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+    function! s:show_documentation()
+      if (index(['vim','help'], &filetype) >= 0)
+        execute 'h '.expand('<cword>')
+      else
+        call CocAction('doHover')
+      endif
+    endfunction
+
+    " Symbol renaming.
+    nmap <leader>rn <Plug>(coc-rename)
+
+    " Formatting selected code.
+    " xmap <leader>f  <Plug>(coc-format-selected)
+    " nmap <leader>f  <Plug>(coc-format-selected)
+
+    augroup cocsettings
+      autocmd!
+      " Setup formatexpr specified filetype(s).
+      autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+      " Update signature help on jump placeholder.
+      autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+      " Highlight the symbol and its references when holding the cursor.
+      autocmd CursorHold * silent call CocActionAsync('highlight')
+    augroup end
+
+    " Map function and class text objects
+    " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+    xmap if <Plug>(coc-funcobj-i)
+    omap if <Plug>(coc-funcobj-i)
+    xmap af <Plug>(coc-funcobj-a)
+    omap af <Plug>(coc-funcobj-a)
+    xmap ic <Plug>(coc-classobj-i)
+    omap ic <Plug>(coc-classobj-i)
+    xmap ac <Plug>(coc-classobj-a)
+    omap ac <Plug>(coc-classobj-a)
+
+    " Add `:Format` command to format current buffer.
+    command! -nargs=0 Format :call CocAction('format')
+
+    " Add `:Fold` command to fold current buffer.
+    command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+    " Add `:OR` command for organize imports of the current buffer.
+    command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
 endif
-
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
-" position. Coc only does snippet and additional edit on confirm.
-" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
-if exists('*complete_info')
-  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-else
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-endif
-
-" Close any possibly open preview windows when exiting insert mode
-inoremap <silent><esc> <esc>:pclose<cr>
-
-" GoTo code navigation.
-"nmap <silent> gd  <cmd>lua vim.lsp.buf.definition()<CR>
-nmap <silent> gd <Plug>(coc-definition)
-nnoremap <silent> gD :call <SID>show_documentation()<CR>
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-silent! nunmap gc
-silent! nunmap gC
-nmap <silent> gca :call CocLocations('ccls','$ccls/call')<cr>
-nmap <silent> gCA :CclsCallHierarchy<cr>
-nmap <silent> gce :call CocLocations('ccls','$ccls/call',{'callee':v:true})<cr>
-nmap <silent> gCE :CclsCalleeHierarchy<cr>
-silent! nunmap gm
-silent! nunmap gM
-nmap <silent> gmv :call CocLocations('ccls','$ccls/member')<cr>
-"  member functions / functions in a namespace
-nmap <silent> gmf :call CocLocations('ccls','$ccls/member',{'kind':3})<cr>
-" nested classes / types in a namespace
-nmap <silent> gmt :call CocLocations('ccls','$ccls/member',{'kind':2})<cr>
-nmap <silent> gM :CclsMemberHierarchy<cr>
-" any types of variables
-silent! nunmap gv
-silent! nunmap gV
-nmap <silent> gv :call CocLocations('ccls','$ccls/vars')<cr>
-" variables of type field
-nmap <silent> gvf :call CocLocations('ccls','$ccls/vars',{'kind':1})<cr>
-" local variables
-nmap <silent> gvl :call CocLocations('ccls','$ccls/vars',{'kind':2})<cr>
-" parameters
-nmap <silent> gvp :call CocLocations('ccls','$ccls/vars',{'kind':4})<cr>
-silent! nunmap gh
-silent! nunmap gH
-" bases
-nmap <silent> ghb :call CocLocations('ccls','$ccls/inheritance',{'levels':10})<cr>
-nmap <silent> gHB :CclsBaseHierarchy<cr>
-"  derived
-nmap <silent> ghd :call CocLocations('ccls','$ccls/inheritance',{'derived':v:true,'levels':10})<cr>
-nmap <silent> gHD :CclsDerivedHierarchy<cr>
-"
-" Use K to show documentation in preview window.
-" nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-" Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
-
-" Formatting selected code.
-" xmap <leader>f  <Plug>(coc-format-selected)
-" nmap <leader>f  <Plug>(coc-format-selected)
-
-augroup cocsettings
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder.
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-  " Highlight the symbol and its references when holding the cursor.
-  autocmd CursorHold * silent call CocActionAsync('highlight')
-augroup end
-
-" Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
-
-" Add `:Format` command to format current buffer.
-command! -nargs=0 Format :call CocAction('format')
-
-" Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-" Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
 
 nmap <leader>b :CocList buffers<cr>
 nmap <leader>c <C-w>c
@@ -425,7 +458,11 @@ nmap <leader>n :CocNext<cr>
 nmap <leader>N :CocPrev<cr>
 nmap <leader>ov :edit $MYVIMRC<cr>
 
-nmap m <Plug>(easymotion-overwin-f)
+if !exists('g:vscode')
+    nmap m <Plug>(easymotion-overwin-f)
+else
+    nmap m <Plug>(easymotion-bd-f)
+endif
 nmap M <Plug>(easymotion-bd-jk)
 xmap m <Plug>(easymotion-bd-f)
 xmap M <Plug>(easymotion-bd-jk)
