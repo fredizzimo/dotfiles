@@ -34,6 +34,7 @@ export EDITOR="$VISUAL"
 export PATH="$HOME/.poetry/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH=$PATH:~/clang/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/
+export PATH=$PATH:~/bin/pru-gcc/bin
 export PATH=$PATH:/usr/local/go/bin
 
 #export GDP_DPI_SCALE=1.75

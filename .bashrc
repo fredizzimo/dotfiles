@@ -123,3 +123,7 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+if [ -f "/etc/arch-release" ]; then
+    source /usr/share/nvm/init-nvm.sh
+fi
