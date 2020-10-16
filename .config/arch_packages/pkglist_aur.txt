@@ -1,0 +1,9 @@
+argparse
+cxxopts
+daemonize
+genie-systemd
+libgmp-static
+neovim-nightly
+nvm
+stm32flash
+yay
